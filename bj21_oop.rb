@@ -62,6 +62,7 @@ class Deck
 end
 
 module Hand
+  
   def show_hand
     puts "---- #{name}'s Hand ----"
     cards.each do|card|
@@ -69,6 +70,7 @@ module Hand
     end
   puts "=> Total: #{total}"
   end
+  
   def total
     face_values = cards.map{|card| card.face_value}
 
@@ -79,6 +81,7 @@ module Hand
       else
         total += (val.to_i == 0 ? 10 : val.to_i)
       end
+    end
   end
 
   #correct for Aces
@@ -95,8 +98,7 @@ module Hand
   end
 
   def is_busted?
-    total < 21
-    
+    total < 21 
   end
 end
 
@@ -108,6 +110,10 @@ class Player
   def initialize(n)
     @name = n
     @cards = []
+  end
+
+  def show_flop
+    show_hand
   end
 
 end
@@ -122,6 +128,13 @@ class Dealer
     @cards = []
   end
 
+  def show_flop
+    puts "----Dealer's Hand----"
+    puts "=> First card is hidden"
+    puts "=> Second card is #{cards[1]}"
+    
+  end
+
 end
 
 
@@ -130,7 +143,7 @@ class Blackjack
   attr_accessor :player, :dealer, :deck
 
   def initialize
-    @player = Player.new("Bob")
+    @player = Player.new("Player1")
     @dealer = Dealer.new
     @deck = Deck.new
   end
@@ -147,16 +160,65 @@ class Blackjack
     dealer.add_card(deck.deal_one)
   end
 
-  def show_hands
-    player.show_hand
-    dealer.show_hand
+  def show_flop
+    player.show_flop
+    dealer.show_flop
+  end
+
+  def blackjack_or_bust?(player_or_dealer)
+    if player_or_dealer.total == 21
+      if player_or_dealer.is_a?(Dealer)
+        puts "Sorry, dealer hit blackjack. #{player.name} losses"
+      else
+        puts "Congratulations, you hit blackjack! #{player.name} wins!"
+      end
+      exit
+    elsif player_or_dealer.is_busted?
+      if player_or_dealer.is_a?(Dealer)
+        puts "Congrat's, dealer busted. #{player.name} wins"
+      else
+        puts "Sorry #{player.name} busted. #{player.name} losses"
+      end
+      exit
+    end
+  end
+
+  def player_turn
+    puts "#{player.name}'s turn. "
+
+    blackjack_or_bust?(player)
+
+    while !player.is_busted?
+      puts "What would you like to do? 1) hit 2) stay"
+      response = gets.chomp
+
+      if !['1', '2'].include?(response)
+        puts "Error: you must enter 1 or 2"
+      next
+
+      if response == '2'
+        puts "#{player.name} chose to stay."
+        break
+      end
+
+      #hit
+      new_card = deck.deal_one
+      puts "Dealing card to #{player.name}: #{new_card}"
+      player.add_card(new_card)
+      puts "#{player.name}'s total is now: #{player.total}"
+
+      blackjack_or_bust?(player)
+
+    end
+    puts "#{player.name} stays."
+
   end
 
   def start
     set_player_name
     deal_cards
-    show_hands
-
+    show_flop
+    player_turn
     
   end
 
@@ -164,7 +226,6 @@ end
 
 game = Blackjack.new
 game.start
-
 
 
 
