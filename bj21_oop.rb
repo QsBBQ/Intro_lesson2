@@ -65,12 +65,29 @@ module Hand
   def show_hand
     puts "---- #{name}'s Hand ----"
     cards.each do|card|
-      puts "=> #{cards}"
+      puts "=> #{card}"
     end
   puts "=> Total: #{total}"
   end
   def total
-    "Some total"
+    face_values = cards.map{|card| card.face_value}
+
+    total = 0
+    face_values.each do |val|
+      if val == "A"
+        total += 11
+      else
+        total += (val.to_i == 0 ? 10 : val.to_i)
+      end
+  end
+
+  #correct for Aces
+    face_values.select{|val| val == "Ace"}.count.times do
+      break if total <= 21
+      total -= 10
+    end
+
+    total
   end
 
   def add_card(new_card)
