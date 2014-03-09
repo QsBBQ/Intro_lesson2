@@ -93,6 +93,11 @@ module Hand
   def add_card(new_card)
     cards << new_card
   end
+
+  def is_busted?
+    total < 21
+    
+  end
 end
 
 class Player
@@ -130,25 +135,22 @@ class Blackjack
     @deck = Deck.new
   end
 
-  def run
+  def start
+    @player.add_card(@deck.deal_one)
+    @dealer.add_card(@deck.deal_one)
+    @player.add_card(@deck.deal_one)
+    @dealer.add_card(@deck.deal_one)
+    @player.show_hand
+    @dealer.show_hand
 
     
   end
 
 end
 
-#Blackjack.new.run
-deck = Deck.new
+game = Blackjack.new
+game.start
 
-player = Player.new("Chris")
-player.add_card(deck.deal_one)
-player.add_card(deck.deal_one)
-player.show_hand
-
-dealer = Dealer.new
-dealer.add_card(deck.deal_one)
-dealer.add_card(deck.deal_one)
-dealer.show_hand
 
 
 
