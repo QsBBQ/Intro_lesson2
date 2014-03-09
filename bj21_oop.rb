@@ -135,13 +135,27 @@ class Blackjack
     @deck = Deck.new
   end
 
+  def set_player_name
+    puts "What's your name?"
+    player.name = gets.chomp
+  end
+
+  def deal_cards
+    player.add_card(deck.deal_one)
+    dealer.add_card(deck.deal_one)
+    player.add_card(deck.deal_one)
+    dealer.add_card(deck.deal_one)
+  end
+
+  def show_hands
+    player.show_hand
+    dealer.show_hand
+  end
+
   def start
-    @player.add_card(@deck.deal_one)
-    @dealer.add_card(@deck.deal_one)
-    @player.add_card(@deck.deal_one)
-    @dealer.add_card(@deck.deal_one)
-    @player.show_hand
-    @dealer.show_hand
+    set_player_name
+    deal_cards
+    show_hands
 
     
   end
