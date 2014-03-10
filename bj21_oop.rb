@@ -198,7 +198,7 @@ class Blackjack
       end
 
       if response == '2'
-        puts "#{player.name} chose to stay."
+        puts "#{player.name} is staying."
         break
       end
 
@@ -211,8 +211,23 @@ class Blackjack
       blackjack_or_bust?(player)
 
     end
-    puts "#{player.name} stays."
+    puts "#{player.name} stays at #{player.total}."
+  end
 
+  def dealer_turn
+    puts "Dealer's turn"
+
+    blackjack_or_bust?(dealer)
+    while dealer.total < 17
+      new_card = deck.deal_one
+      puts "Dealing card to dealer: #{new_card}"
+      dealer.add_card(new_card)
+      puts "Dealer total is now: #{dealer.total}"
+
+      blackjack_or_bust?(dealer)
+    end
+    puts "Dealer stays at #{dealer.total}."
+    
   end
 
   def start
@@ -220,6 +235,7 @@ class Blackjack
     deal_cards
     show_flop
     player_turn
+    dealer_turn
     
   end
 
