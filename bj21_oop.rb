@@ -98,7 +98,7 @@ module Hand
   end
 
   def is_busted?
-    total > 21 
+    total > Blackjack::BLACKJACK_AMOUNT 
   end
 end
 
@@ -141,6 +141,8 @@ end
 class Blackjack
   #Game engine
   attr_accessor :player, :dealer, :deck
+  BLACKJACK_AMOUNT = 21
+  DEALER_HIT_MIN = 21
 
   def initialize
     @player = Player.new("Player1")
@@ -166,20 +168,20 @@ class Blackjack
   end
 
   def blackjack_or_bust?(player_or_dealer)
-    if player_or_dealer.total == 21
+    if player_or_dealer.total == BLACKJACK_AMOUNT
       if player_or_dealer.is_a?(Dealer)
         puts "Sorry, dealer hit blackjack. #{player.name} losses"
       else
         puts "Congratulations, you hit blackjack! #{player.name} wins!"
       end
-      exit
+      play_again?
     elsif player_or_dealer.is_busted?
       if player_or_dealer.is_a?(Dealer)
         puts "Congrat's, dealer busted. #{player.name} wins"
       else
         puts "Sorry #{player.name} busted. #{player.name} losses"
       end
-      exit
+      play_again?
     end
   end
 
@@ -218,7 +220,7 @@ class Blackjack
     puts "Dealer's turn"
 
     blackjack_or_bust?(dealer)
-    while dealer.total < 17
+    while dealer.total < DEALER_HIT_MIN
       new_card = deck.deal_one
       puts "Dealing card to dealer: #{new_card}"
       dealer.add_card(new_card)
@@ -230,12 +232,40 @@ class Blackjack
     
   end
 
+  def who_won?
+    if player.total > dealer.total
+      puts "Congrates #{player.name} wins"
+    elsif player.total < dealer.total
+      puts "Sorry, #{player.name} losses."
+    else
+      puts "It's a tie"
+    end
+    play_again?
+  end
+
+  def play_again?
+    puts ""
+    puts "Would you like to play again? 1) yes 2) no, exit"
+    if gets.chomp == '1'
+      puts "Starting new game..."
+      puts ""
+      deck = Deck.new
+      player.cards = []
+      dealer.cards = []
+      start
+    else
+      puts "Goodbye!"
+      exit
+    end
+  end
+
   def start
     set_player_name
     deal_cards
     show_flop
     player_turn
     dealer_turn
+    who_won?
     
   end
 
