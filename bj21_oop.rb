@@ -82,10 +82,10 @@ module Hand
         total += (val.to_i == 0 ? 10 : val.to_i)
       end
     end
-  end
+  
 
-  #correct for Aces
-    face_values.select{|val| val == "Ace"}.count.times do
+    #correct for Aces
+    face_values.select{|val| val == "A"}.count.times do
       break if total <= 21
       total -= 10
     end
@@ -139,7 +139,7 @@ end
 
 
 class Blackjack
-  #The idea is the class tying it all together for Blackjack
+  #Game engine
   attr_accessor :player, :dealer, :deck
 
   def initialize
@@ -194,7 +194,8 @@ class Blackjack
 
       if !['1', '2'].include?(response)
         puts "Error: you must enter 1 or 2"
-      next
+        next
+      end
 
       if response == '2'
         puts "#{player.name} chose to stay."
