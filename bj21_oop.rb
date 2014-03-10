@@ -98,7 +98,7 @@ module Hand
   end
 
   def is_busted?
-    total < 21 
+    total > 21 
   end
 end
 
